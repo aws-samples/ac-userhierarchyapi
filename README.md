@@ -1,17 +1,16 @@
-## My Project
 
-TODO: Fill this README out!
+# Amazon Connect contact flow API's demo  
 
-Be sure to:
+This demo shows how you can leverage [Amazon Connect](https://aws.amazon.com/connect/) api's to manage user hierarchies.  
 
-* Change the title in this README
-* Edit your repository description on GitHub
+## Usage
+Use `sam` to build, invoke and deploy the function.
 
-## Security
+##### SAM Build:
+Ensure you are in the root folder
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+`sam build --use-container`
 
-## License
+##### SAM Deploy:
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
-
+`sam deploy template.yaml --s3-bucket REPLACE-ME --stack-name blog-user-hierarchies --capabilities CAPABILITY_IAM --parameter-overrides ParameterKey=CFS3BucketForWebSite,ParameterValue=REPLACE-ME ParameterKey=backupDDBTable,ParameterValue=REPLACE-ME ParameterKey=arnMappingDDBTable,ParameterValue=REPLACE-ME`

@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Amazon Connect - User Hierarchy API's</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="utf-8" http-equiv="encoding">
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    
+    <script src=https://cdn.jsdelivr.net/npm/jquery@3.5/dist/jquery.min.js></script>
+    
+        
+    <script src="js/userhierarchy.js"></script>
+    <script src="js/aws-sdk-uh.js"></script>
+    
+    <script src=https://cdn.jsdelivr.net/npm/dna.js@1.6/dist/dna.min.js></script>
+    <script src=https://cdn.jsdelivr.net/npm/web-ignition@1.2/dist/library.min.js></script>
+    
+    <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@0.2/dist/pretty-print-json.css>
+    <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@0.2/dist/pretty-print-json.js></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.21/sl-1.3.1/datatables.min.css"/>
+     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.21/sl-1.3.1/datatables.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+<style>
+    #section-rp-main {
+        padding: 10px;
+        max-width: 250px;
+        height: 900px;
+        margin-left: 0px;
+        float: left;
+        overflow: auto;
+    }
+    #section-json-output {
+        padding: 10px;
+        max-width: 550px;
+        height: 900px;
+        margin-left: 0px;
+        float: left;
+    }
+    
+    #section-rp-list {
+        padding: 10px;
+        max-width: 600px;
+        height: 900px;
+        margin-left: 0px;
+        float: left;
+    }
+    
+    #rpFormatted{
+        white-space: break-spaces;
+        word-break: break-word;
+    }
+    #rpDivFormatted{
+        overflow: scroll;
+        height: 830px;
+    }
+    .structure{
+        background: aliceblue;
+        font-weight: bold;  
+        border-bottom: 1px solid black;  
+    }
+    .hierarchy{
+        background: gainsboro;
+        font-weight: bold;  
+        border-bottom: 1px solid black;  
+    }
+    .structureChild{
+        border-bottom: 1px solid black;  
+    }
+    .spnRenameDelete{
+        margin-left: 350px;
+        font-size: 14px;    
+    }
+    </style>
+    
+</head>
+
+<body>
+
+<!--navbar div with the id-->
+    <section id="section-rp-main">
+        <form>
+         <fieldset>
+            <legend>Amazon Connect User Hierarchy APIs</legend>
+            <div>
+               <input type="button" id="awsConfiguration" value="AWS Configurations">
+               <input type="button" id="listUH" value="List all user hierarchies">
+               <input type="button" id="describeUHS" value="User hierarchy structure">
+               <input type="button" id="listUH2" value="All user hierarchy groups">
+               <input type="button" id="manageUHS" value="Manage user hierarchy structure">
+            </div>               
+         </fieldset>
+         </form>
+    </section>
+    <section id="section-rp-list">
+        <legend><span id='spnUHS'></span></legend>
+        <div style="height: 90%;  overflow: scroll;">
+            <div id='divNavigation'></div>
+            <div id='divContainer'></div>
+            
+        </div>
+    </section>
+
+    <section id="section-json-output">
+        <legend>JSON Output</legend>
+        <div id="rpDivFormatted"><pre id="rpFormatted"></pre></div>
+    </section>
+
+    <div id="dialog" title="Waiting">
+          <span id="waitingSpan">Waiting for server to respond</span>
+    </div>
+    <div id="resultDialog" title="API Result">
+          <span id="resultSpan"></span>
+    </div>
+    
+        <!-- Beginning of User Hierarchy Structure -->
+    <div id="uhStructureDialog" title="User Hierarchy Structure">
+         <form  name="UHStrucForm" id="UHStrucForm" autocomplete="on">
+              <fieldset class="config-info">
+                   <legend>User Hierarchy Configuration</legend>
+                      <div>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label for="dlgUHSLevelOne">Level 1 : </label>
+                            </td>
+                            <td>
+                              <input name="dlgUHSLevelOne" type="text" id="dlgUHSLevelOne" placeholder="Level 1">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                                <label for="dlgUHSLevelTwo">Level 2 : </label>
+                            </td>
+                            <td>
+                              <input name="dlgUHSLevelTwo" type="text" id="dlgUHSLevelTwo" placeholder="Level 2">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label for="dlgUHSLevelThree">Level 3 : </label>
+                            </td>
+                            <td>
+                              <input name="dlgUHSLevelThree" type="text" id="dlgUHSLevelThree" placeholder="Level 3">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label for="dlgUHSLevelFour">Level 4 : </label>
+                            </td>
+                            <td>
+                              <input name="dlgUHSLevelFour" type="text" id="dlgUHSLevelFour" placeholder="Level 4">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <label for="dlgUHSLevelFive">Level 5 : </label>
+                            </td>
+                            <td>
+                              <input name="dlgUHSLevelFive" type="text" id="dlgUHSLevelFive" placeholder="Level 5" >
+                            </td>
+                          </tr>
+                            
+                          </tbody>
+                        </table>
+                   </div>
+              </fieldset>
+              <span id="spnAWSMessage" style="color: red;font-weight: bold;float:left"></span><button class="btn" type="button" id="btnSaveUHS" style="width: 200px;float:right"> Save user hierarchy structure </button>
+           </form>
+     </div>
+    <!-- End of User Hierarchy Structure -->
+    
+    <!-- Beginning of AWS Configurations -->
+    <div id="configDialog" title="AWS IAM Credentials">
+         <form  name="AWSIAMInfo" id="AWSIAMInfo" autocomplete="on">
+              <fieldset class="config-info">
+                   <legend>Enter AWS credentials for User Hierarchy Management</legend>
+                      <div>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label for="dlgSourceAccessKey">Access Key : </label>
+                            </td>
+                            <td>
+                              <input name="dlgSourceAccessKey" type="text" id="dlgSourceAccessKey" placeholder="Access Key">
+                            </td>
+                            <td>
+                                <label for="dlgSourceRegion">Region : </label>
+                            </td>
+                            <td>
+                              <input name="dlgSourceRegion" type="text" id="dlgSourceRegion" placeholder="Region">
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                              <label for="dlgSourceSecretKey">Secret Key : </label>
+                            </td>
+                            <td colspan=3>
+                              <input name="dlgSourceSecretKey" type="text" id="dlgSourceSecretKey" placeholder="Secret Key" style="width:100%;">
+                            </td>
+                            
+                            </tr>
+                            <tr>
+                            <td>
+                              <label for="dlgInstanceId">Instance Id : </label>
+                            </td>
+                            <td colspan=3>
+                              <input name="dlgInstanceId" type="text" id="dlgInstanceId" placeholder="Instance Id" style="width:100%;">
+                            </td>
+                            </tr>
+                            
+                          </tbody>
+                        </table>
+                   </div>
+              </fieldset>
+              <span id="spnAWSMessage" style="color: red;font-weight: bold;float:left"></span><button class="btn" type="button" id="btnConfiguration" style="width: 200px;float:right"> Save Configurations </button>
+           </form>
+     </div>
+     <!-- End of AWS Config -->
+     
+    <div id="confirmDialog" title="Delete?">
+      <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to delete?</p>
+    </div>
+    
+    <div id="renameDialog" title="Change name of the hierarchy">
+        <form  name="changeNameForm" id="changeNameForm" autocomplete="on">
+            <fieldset class="config-info">
+                <legend>Enter the new name for the hierarchy</legend>
+                   <div>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label for="dlgOldName">Old name : </label>
+                            </td>
+                            <td>
+                              <input name="dlgGroupId" type="hidden" id="dlgGroupId" >
+                              <input name="dlgGroupLevel" type="hidden" id="dlgGroupLevel" >                              
+                              <input name="dlgOldName" type="text" id="dlgOldName" placeholder="" readonly>
+                            </td>
+                            <td>
+                              <label for="dlgNewName"> New Name : </label>
+                            </td>
+                            <td>
+                              <input name="dlgNewName" type="text" id="dlgNewName" placeholder="" autocomplete="off">
+                            </td>
+                            </tr>
+                         </tbody>
+                      </table>
+                   </div> 
+              </fieldset>
+              <button class="btn" type="button" id="btnRenameHierarchy" style="width: 200px;"> Rename hierarchy </button>
+        </form>
+    </div>
+
+    <div id="addDialog" title="Add name to the hierarchy">
+        <form  name="addNameForm" id="addNameForm" autocomplete="on">
+            <fieldset class="config-info">
+                <legend>Enter the new name for the hierarchy</legend>
+                   <div>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <label for="dlgNewName">Name : </label>
+                              <input name="dlgGroupIdNew" type="hidden" id="dlgGroupIdNew" >
+                            </td>
+                            <td>
+                              <input name="dlgAddName" type="text" id="dlgAddName" placeholder="" autocomplete="off">
+                            </td>
+                            </tr>
+                         </tbody>
+                      </table>
+                   </div> 
+              </fieldset>
+              <button class="btn" type="button" id="btnAddHierarchy" style="width: 200px;"> Add hierarchy </button>
+        </form>
+    </div>
+        
+</body>
+</html>

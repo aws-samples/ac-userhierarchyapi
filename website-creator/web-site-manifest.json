@@ -1,0 +1,8 @@
+{
+    "files": [
+        "./userhierarchy.html",
+        "./css/style.css",
+        "./js/aws-sdk-uh.js",
+		"./js/userhierarchy.js"
+    ]
+}
