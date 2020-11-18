@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >
-  "Amazon Connect user hierarchy api's demo"
+  Amazon Connect user hierarchy APIs demo
 
 Mappings: 
   FunctionMap:
@@ -196,9 +196,7 @@ Resources:
         Runtime: "nodejs12.x"
         MemorySize: 256
         Timeout: 120
-        Code:
-            S3Bucket: !FindInMap [FunctionMap, Configuration, S3Bucket]
-            S3Key: !Join ["", [!FindInMap [FunctionMap, Configuration, S3Key], 'WebSiteHelper.zip']]
+        Code: ./website-creator/                      
                       
     invokeWebSiteCreator:
         Type: Custom::CreateWebSite
