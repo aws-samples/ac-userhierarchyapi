@@ -621,7 +621,7 @@ function showResults(message){
 }
 
 function loadConnectAPIs() {
-	connect = new AWS.Connect({ region: "us-west-2", endpoint: "https://91am9nwnzk.execute-api.us-west-2.amazonaws.com/Prod" }, {apiVersion: '2017-08-08'});
+	connect = new AWS.Connect({ region: dlgSourceRegion});
 }
 
 
