@@ -642,7 +642,7 @@ function handleWindow(openClose, text) {
 function setAWSConfig(accessKey, secretKey, rgn) {
 
     AWS.config.update({
-        accessKeyId: accessKey, secretAccessKey: secretKey, region: rgn
+        accessKeyId: accessKey, secretAccessKey: secretKey, region: rgn, retryDelayOptions: {base: 600}, maxRetries : 3
     });    
     AWS.config.credentials.get(function (err) {
         if (err)
